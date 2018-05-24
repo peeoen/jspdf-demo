@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ResizeEvent } from 'angular-resizable-element';
 import * as html2canvas from 'html2canvas';
 import * as jsPDF from 'jspdf';
 // import * as html2canvas from 'html2canvas';
@@ -16,23 +17,12 @@ export class BlankFormComponent implements OnInit {
     height: null
   };
 
-  dropOverActive = false;
 
-  droppedData = '';
-
-  onDrop({ dropData }: { dropData: any }): void {
-    console.log(dropData);
-    this.dropOverActive = false;
-    this.droppedData = dropData;
-    setTimeout(() => {
-      this.droppedData = '';
-    }, 2000);
-  }
   constructor() { }
 
   ngOnInit() {
     // this.pdfSrc = 'assets/a4.pdf';
-    this.doc = new jsPDF('p', 'px', 'a4');
+    this.doc = new jsPDF('p', 'px', 'a3');
     this.doc.text(10, 10, 'reportTitle1111111111reportTitle1111111111reportTitle111111111111111111111');
     // this.doc.addPage();
     const uri = this.doc.output('datauristring');
@@ -49,30 +39,30 @@ export class BlankFormComponent implements OnInit {
 
 
   download() {
-    const element1 = document.getElementsByClassName('form-container')[0];
-    const ratio = element1.clientHeight / element1.clientWidth;
     const element = document.getElementById('content');
     const elementRect = element.getBoundingClientRect();
-    console.log(elementRect);
     html2canvas(element, {}).then(canvas => {
+      const pdf = new jsPDF('p', 'px', 'a3');
+      pdf.text(10, 10, 'reportTitle1111111111reportTitle1111111111reportTitle111111111111111111111');
       const dataUrl = canvas.toDataURL('image/png');
       const factor = 16 / 9;
+      // const factor = pdf.internal.scaleFactor;
+      const eLeft = parseFloat(element.style.left);
+      const eTop = parseFloat(element.style.top);
       // const factor = this.doc.internal.scaleFactor;
-      // this.doc.internal.scaleFactor;
-      // this.doc.addImage(canvas, 'image/png', element.clientLeft / factor , element.clientTop / factor, element.clientWidth / factor, element.clientHeight / factor);
-      this.doc.addImage(canvas, 'image/png', 100 / factor, 300 / factor, element.clientWidth / factor, element.clientHeight / factor);
-      // this.doc.addImage(canvas, 'image/png', 0 / factor , 0 / factor, this.doc.internal.pageSize.width , this.doc.internal.pageSize.height );
-      this.doc.save('test.pdf');
+      pdf.addImage(canvas, 'image/png', eLeft / factor, eTop / factor, element.clientWidth / factor, element.clientHeight / factor);
+      pdf.save('test.pdf');
     });
   }
 
   pageRendered(e: CustomEvent) {
-    console.log('(page-rendered)', e);
-    console.log(document.getElementsByClassName('pdfViewer')[0].clientWidth);
-    console.log(document.getElementsByClassName('pdfViewer')[0].clientHeight);
     const el = document.getElementsByClassName('pdfViewer')[0];
     this.screen.width = el.clientWidth + 'px';
     this.screen.height = el.clientHeight + 'px';
+  }
+
+  drop(event) {
+
   }
 
   dragEnd(event, e: HTMLElement) {
@@ -80,5 +70,12 @@ export class BlankFormComponent implements OnInit {
     const top = parseFloat(e.style.top);
     e.style.left = (left + event.x) + 'px';
     e.style.top = (top + event.y) + 'px';
+  }
+
+  onResizeEnd(event: ResizeEvent, e: HTMLElement): void {
+    const width = parseFloat(e.style.width);
+    const height = parseFloat(e.style.height);
+    e.style.width = (event.rectangle.width) + 'px';
+    e.style.height = (event.rectangle.height) + 'px';
   }
 }

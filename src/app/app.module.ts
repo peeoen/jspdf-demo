@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule, MatIconModule, MatListModule, MatSidenavModule, MatToolbarModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DragAndDropModule } from 'angular-draggable-droppable';
+import { ResizableModule } from 'angular-resizable-element';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BlankFormComponent } from './blank-form/blank-form.component';
 import { MainNavComponent } from './main-nav/main-nav.component';
-import { DragAndDropModule } from 'angular-draggable-droppable';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,6 +27,7 @@ import { DragAndDropModule } from 'angular-draggable-droppable';
     MatButtonModule,
     MatSidenavModule,
     MatIconModule,
+    ResizableModule,
     DragAndDropModule.forRoot(),
     MatListModule,
     AppRoutingModule
